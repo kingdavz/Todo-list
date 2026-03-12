@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<title>To-Do List</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>To-Do List</h1>
+
+<form action="{{ url_for(index) }}" method="POST" class="task-form">
+<input type="text" name="task" placeholder="Enter a task" required>
+<button type="submit">Add</button>
+</form>
+
+<ul>
+
+{% for task in tasks %}
+<li class="{% if task.completed %}completed{% endif %}">
+
+<a href="/toggle/{{ loop.index }}">
+<input type="checkbox" {% if task.completed %}checked{% endif %}>
+</a>
+
+<span>{{ task.text }}</span>
+
+<div class="actions">
+
+<form action="{{ loop.index }}" method="POST">
+    <input type="text" name="task" placeholder="Edit task" required>
+    <input type="hidden" name="action" value="add">
+    <button type="submit">Edit</button>
+</form>
+
+<a href="{{ loop.index }}">
+<button type="button">Delete</button>
+</a>
+
+</div>
+
+</li>
+{% endfor %}
+
+</ul>
+
+</div>
+
+</body>
+</html>
