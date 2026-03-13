@@ -1,0 +1,47 @@
+{% include 'base.html' %}
+{% block content %}
+<div class="container">
+    <nav class="navbar">
+        <div class="navbar-content">
+            <div class="navbar-left">
+                <h1 class="app-title">📝 To-Do List</h1>
+            </div>
+            <div class="navbar-right">
+                <span class="user-info">👤 {{ username }}</span>
+                <a href="{{ url_for('logout') }}" class="btn btn-logout">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="content">
+        <main class="main-area" style="max-width: 600px; margin: 50px auto;">
+            <div class="add-task-section">
+                <h2>Edit Task</h2>
+                {% if data.message %}
+                    <p class="msg {{data.type}}">{{ data.message }}</p>
+                {% endif %}
+                
+                <form method="POST" action="{{ url_for('dashboard') }}">
+                    <input type="hidden" name="task_id" value="{{ task.id }}">
+                    <input type="hidden" name="action" value="update">
+                    
+                    <div class="form-group">
+                        <label for="title">Task Title</label>
+                        <input type="text" name="title" id="title" value="{{ task.title }}" required class="input-field">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea name="description" id="description" rows="4" class="input-field">{{ task.description }}</textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+</div>
+{% endblock %}

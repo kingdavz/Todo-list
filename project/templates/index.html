@@ -1,51 +1,103 @@
-<!DOCTYPE html>
-<meta charset="UTF-8">
-<title>To-Do List</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-
-<body>
-
+{% include 'base.html' %}
+{% block content %}
 <div class="container">
+    <nav class="navbar">
+        <div class="navbar-content">
+            <div class="navbar-left">
+                <h1 class="app-title">📝 To-Do List</h1>
+            </div>
+            <div class="navbar-right">
+                <span class="user-info">👤 {{ username }}</span>
+                <a href="{{ url_for('logout') }}" class="btn btn-logout">Logout</a>
+            </div>
+        </div>
+    </nav>
 
-<h1>To-Do List</h1>
+    <div class="content">
+        <aside class="sidebar">
+            <div class="sidebar-card">
+                <h3>Quick Stats</h3>
+                <div class="stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Total Tasks</span>
+                        <span class="stat-value">{{ tasks|length }}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Completed</span>
+                        <span class="stat-value completed">{{ tasks|selectattr('completed', 'equalto', 'True')|list|length }}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Pending</span>
+                        <span class="stat-value pending">{{ tasks|selectattr('completed', 'equalto', 'False')|list|length }}</span>
+                    </div>
+                </div>
+            </div>
 
-<form action="{{ url_for(index) }}" method="POST" class="task-form">
-<input type="text" name="task" placeholder="Enter a task" required>
-<button type="submit">Add</button>
-</form>
+            <div class="sidebar-card">
+                <h3>User Info</h3>
+                <p><strong>Username:</strong> {{ username }}</p>
+                <p><strong>Email:</strong> {{ email }}</p>
+            </div>
+        </aside>
 
-<ul>
+        <main class="main-area">
+            <div class="add-task-section">
+                <h2>Add New Task</h2>
+                {% if data.message %}
+                    <p class="msg {{data.type}}">{{ data.message }}</p>
+                {% endif %}
+                <form method="POST" action="{{ url_for('dashboard') }}">
+                    <div class="form-group">
+                        <input type="text" name="title" placeholder="Task title..." required class="input-field">
+                    </div>
+                    <div class="form-group">
+                        <textarea name="description" placeholder="Task description (optional)..." rows="3" class="input-field"></textarea>
+                    </div>
+                    <button type="submit" name="action" value="add" class="btn btn-primary">➕ Add Task</button>
+                </form>
+            </div>
 
-{% for task in tasks %}
-<li class="{% if task.completed %}completed{% endif %}">
-
-<a href="/toggle/{{ loop.index }}">
-<input type="checkbox" {% if task.completed %}checked{% endif %}>
-</a>
-
-<span>{{ task.text }}</span>
-
-<div class="actions">
-
-<form action="{{ loop.index }}" method="POST">
-    <input type="text" name="task" placeholder="Edit task" required>
-    <input type="hidden" name="action" value="add">
-    <button type="submit">Edit</button>
-</form>
-
-<a href="{{ loop.index }}">
-<button type="button">Delete</button>
-</a>
-
+            <div class="tasks-section">
+                <h2>Your Tasks</h2>
+                {% if tasks %}
+                    <div class="tasks-list">
+                        {% for task in tasks %}
+                            <div class="task-card {% if task.completed == 'True' %}completed{% endif %}">
+                                <div class="task-content">
+                                    <div class="task-header">
+                                        <form method="POST" action="{{ url_for('dashboard') }}" style="display:inline;">
+                                            <input type="hidden" name="task_id" value="{{ task.id }}">
+                                            <input type="checkbox" 
+                                                {% if task.completed == 'True' %}checked{% endif %} 
+                                                onchange="this.form.submit()" 
+                                                name="action" 
+                                                value="toggle"
+                                                class="task-checkbox">
+                                        </form>
+                                        <h3 class="task-title">{{ task.title }}</h3>
+                                    </div>
+                                    {% if task.description %}
+                                        <p class="task-description">{{ task.description }}</p>
+                                    {% endif %}
+                                    <div class="task-date">Created: {{ task.created_at }}</div>
+                                </div>
+                                <div class="task-actions">
+                                    <form method="GET" action="{{ url_for('edit_task', task_id=task.id) }}" style="display:inline;">
+                                        <button type="submit" class="btn-icon edit" title="Edit">✏️</button>
+                                    </form>
+                                    <form method="POST" action="{{ url_for('dashboard') }}" style="display:inline;">
+                                        <input type="hidden" name="task_id" value="{{ task.id }}">
+                                        <button type="submit" name="action" value="delete" class="btn-icon delete" title="Delete" onclick="return confirm('Delete this task?')">🗑️</button>
+                                    </form>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="no-tasks">No tasks yet. Add one to get started!</p>
+                {% endif %}
+            </div>
+        </main>
+    </div>
 </div>
-
-</li>
-{% endfor %}
-
-</ul>
-
-</div>
-
-</body>
-</html>
+{% endblock %}

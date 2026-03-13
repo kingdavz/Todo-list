@@ -1,0 +1,30 @@
+{% include 'base.html' %}
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <h1>📝 To-Do List</h1>
+        <form method="POST" action="{{ url_for('login') }}">
+            <h2>Login</h2>
+            {% if data.message %}
+                <p class="msg {{data.type}}">{{ data.message }}</p>
+            {% endif %}
+            
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" name="username" id="username" placeholder="Enter username" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" name="password" id="password" placeholder="Enter password" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Login</button>
+
+            <div class="form-links">
+                <a href="{{url_for('signup')}}">Register</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
