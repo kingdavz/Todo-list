@@ -62,7 +62,7 @@ body {
     width: 100%;
     padding: 12px;
     border: 1px solid #ddd;
-    border-radius: 6px;
+    border-radius: 16px 12px;
     font-size: 14px;
     transition: all 0.3s;
 }
@@ -558,9 +558,7 @@ body {
     border: 1px solid #f5c6cb;
 }
 
-/* ==========================================
-   RESPONSIVE DESIGN
-   ========================================== */
+
 
 @media (max-width: 768px) {
     .content {
@@ -664,9 +662,7 @@ body {
     background: #5568d3;
 }
 
-/* ==========================================
-   UTILITY CLASSES
-   ========================================== */
+
 
 .hidden {
     display: none !important;
